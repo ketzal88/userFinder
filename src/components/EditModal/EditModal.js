@@ -1,36 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useStyles } from "./EditModal.styles";
 import Box from "@mui/material/Box";
 import { TextField, Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import parserData from "../../utils/parser";
 
-export default function EditModal({ open, handleOpen, user, setEditUser }) {
+const initialValues = {
+  fName: "Wayne",
+  last: "Campbell",
+  city: "Cambridge",
+  state: "Arkansas",
+  email: "wayne.campbell@example.com",
+  phone: "(307) 885-3375",
+};
+
+export default function EditModal({ open, handleOpen, user, users, setUsers }) {
   const classes = useStyles();
-  const initialValues = {
-    fName: "Wayne",
-    last: "Campbell",
-    location: {
-      city: "Cambridge",
-      state: "Arkansas",
-    },
-    email: "wayne.campbell@example.com",
-    phone: "(307) 885-3375",
-  };
-  const [formValues, setFormValues] = useState(initialValues);
-
-  const fName = user.name.first;
-  const last = user.name.last;
-  const city = user.location.city;
-  const state = user.location.state;
-  const email = user.email;
-  const phone = user.phone;
-
-  useEffect(() => {
-    return () => {
-      setFormValues({ ...user, fName, last, city, state, phone, email });
-    };
-  }, [city, email, fName, last, phone, state, user]);
+  const [formValues, setFormValues] = useState(
+    parserData(user, true) || initialValues
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,13 +30,15 @@ export default function EditModal({ open, handleOpen, user, setEditUser }) {
   };
 
   const handleSubmit = () => {
-    formValues.name.first = formValues.fName;
-    formValues.name.last = formValues.last;
-    formValues.location.city = formValues.city;
-    formValues.location.state = formValues.state;
-    // formValues.phone = formValues.phone;
-    // formValues.email = formValues.email;
-    setEditUser({ ...formValues, user });
+    const editedUser = parserData(formValues, false);
+    const usersCopy = [...users];
+    const newUsers = usersCopy.map((item) => {
+      if (item.id.value.includes(editedUser.id)) {
+        item = { ...item, ...editedUser };
+      }
+      return item;
+    });
+    setUsers(newUsers);
     handleOpen();
   };
 
@@ -59,10 +50,10 @@ export default function EditModal({ open, handleOpen, user, setEditUser }) {
       aria-describedby="modal-modal-description"
     >
       <Box className={classes.mainBox}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Edit the user information
-        </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Edit the user information
+          </Typography>
           <TextField
             variant="standard"
             id="fName"

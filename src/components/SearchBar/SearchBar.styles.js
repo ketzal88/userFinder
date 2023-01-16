@@ -3,14 +3,19 @@ import { makeStyles } from "@mui/styles";
 export const useStyles = makeStyles(() => ({
   grid: {
     display: "flex",
-    // flexWrap: "wrap",
     alignItems: "center",
     alignContent: "center",
     flexDirection: "row",
     marginBottom: "50px",
   },
+  iconGrid: {
+    display: "flex",
+    alignItems: "center",
+    alignContent: "center",
+    flexDirection: "row",
+  },
   cardMain: {
-    width: "600px",
+    width: "100%",
     borderRadius: 9,
     margin: "10px",
     display: "flex",
@@ -40,5 +45,9 @@ export const useStyles = makeStyles(() => ({
   },
   sortIcon: {
     color: "white",
+  },
+  sortText: {
+    color: "white",
+    fontStyle: "bold",
   },
 }));
