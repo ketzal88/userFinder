@@ -20,4 +20,13 @@ export const useStyles = makeStyles(() => ({
     fontSize: "48px",
     color: "white",
   },
+  userName: {
+    color: "#FFFFFF",
+    fontSize: "20px",
+    fontFamily: "Roboto",
+    justifyContent: "center",
+    marginTop: 8,
+    marginBottom: 15,
+    textDecoration: "none",
+  },
 }));

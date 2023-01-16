@@ -3,8 +3,11 @@ import { useStyles } from "./SearchBar.styles";
 import { InputBase, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import GiteIcon from "@mui/icons-material/Gite";
+import EmailIcon from "@mui/icons-material/Email";
 
-export default function SearchBar({ handleSearchInput, sortByName }) {
+export default function SearchBar({ handleSearchInput, sortBy }) {
   const classes = useStyles();
 
   return (
@@ -22,9 +25,21 @@ export default function SearchBar({ handleSearchInput, sortByName }) {
           />
         </div>
       </div>
-      <Button onClick={sortByName}>
-        <SortByAlphaIcon className={classes.sortIcon} fontSize={"large"} />
-      </Button>
+      <div className={classes.iconGrid}>
+        <p className={classes.sortText}>Sort by: </p>
+        <Button onClick={sortBy("name")}>
+          <SortByAlphaIcon className={classes.sortIcon} fontSize={"large"} />
+        </Button>
+        <Button onClick={sortBy("city")}>
+          <LocationCityIcon className={classes.sortIcon} fontSize={"large"} />
+        </Button>
+        <Button onClick={sortBy("state")}>
+          <GiteIcon className={classes.sortIcon} fontSize={"large"} />
+        </Button>
+        <Button onClick={sortBy("email")}>
+          <EmailIcon className={classes.sortIcon} fontSize={"large"} />
+        </Button>
+      </div>
     </div>
   );
 }
