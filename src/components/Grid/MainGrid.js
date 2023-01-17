@@ -17,7 +17,8 @@ export default function MainGrid() {
   });
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
-  const [sorted, setSorted] = useState(false);
+  const [sorted, setSorted] = useState("");
+  // const [sortedCity, setSortedCity] = useState(false);
   const [editUser, setEditUser] = useState({});
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
@@ -31,13 +32,10 @@ export default function MainGrid() {
   }, [paramsData]);
 
   const loadMore = () => {
-    setParamsData(
-      (prevState) => ({
-        page: prevState.page + 1,
-        scrolling: true,
-      }),
-      loadData(paramsData)
-    );
+    setParamsData((prevState) => ({
+      page: prevState.page + 1,
+    }));
+    loadData(paramsData);
   };
 
   let filteredList = useMemo(() => {
@@ -49,11 +47,20 @@ export default function MainGrid() {
   }, [search, users]);
 
   filteredList = useMemo(() => {
-    if (!sorted) return filteredList;
-
-    return filteredList.sort((a, b) =>
-      a.name.first.localeCompare(b.name.first)
-    );
+    switch (sorted) {
+      case "name":
+        return filteredList.sort((a, b) =>
+          a.name.first.localeCompare(b.name.first)
+        );
+      case "city":
+        return filteredList.sort((a, b) =>
+          a.location.city.localeCompare(b.location.city)
+        );
+      case "email":
+        return filteredList.sort((a, b) => a.email.localeCompare(b.email));
+      default:
+        return filteredList;
+    }
   }, [sorted, filteredList]);
 
   return (
@@ -73,6 +80,7 @@ export default function MainGrid() {
       <div className={classes.grid}>
         <SearchBar
           setSorted={setSorted}
+          // setSortedCity={setSortedCity}
           search={search}
           setSearch={setSearch}
         />
@@ -92,7 +100,7 @@ export default function MainGrid() {
             <Button
               variant="contained"
               onClick={() => {
-                loadData();
+                setSearch("");
               }}
               startIcon={<RefreshIcon />}
               sx={{ margin: 10, width: "50%", height: "80px" }}
