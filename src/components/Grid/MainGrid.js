@@ -75,7 +75,7 @@ export default function MainGrid() {
         />
       )}
       <div className={classes.grid}>
-        <h1 className={classes.titleHeader}>User DataBase</h1>
+        <h1 className={classes.titleHeader}> 🧑 - User DataBase - 👩</h1>
       </div>
       <div className={classes.grid}>
         <SearchBar
