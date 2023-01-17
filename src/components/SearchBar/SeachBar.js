@@ -3,11 +3,8 @@ import { useStyles } from "./SearchBar.styles";
 import { InputBase, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
-import GiteIcon from "@mui/icons-material/Gite";
-import EmailIcon from "@mui/icons-material/Email";
 
-export default function SearchBar({ sortByFunc, search, setSearch }) {
+export default function SearchBar({ setSorted, search, setSearch }) {
   const classes = useStyles();
 
   return (
@@ -28,17 +25,8 @@ export default function SearchBar({ sortByFunc, search, setSearch }) {
       </div>
       <div className={classes.iconGrid}>
         <p className={classes.sortText}>Sort by: </p>
-        <Button onClick={() => sortByFunc("name")}>
+        <Button onClick={() => setSorted(true)}>
           <SortByAlphaIcon className={classes.sortIcon} fontSize={"large"} />
-        </Button>
-        <Button onClick={() => sortByFunc("city")}>
-          <LocationCityIcon className={classes.sortIcon} fontSize={"large"} />
-        </Button>
-        <Button onClick={() => sortByFunc("state")}>
-          <GiteIcon className={classes.sortIcon} fontSize={"large"} />
-        </Button>
-        <Button onClick={() => sortByFunc("email")}>
-          <EmailIcon className={classes.sortIcon} fontSize={"large"} />
         </Button>
       </div>
     </div>
