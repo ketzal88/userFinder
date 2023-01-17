@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Button } from "@mui/material";
 import { useStyles } from "./MainGrid.styles";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -16,13 +16,19 @@ export default function MainGrid() {
     total_pages: null,
   });
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState(".name.first");
   const [editUser, setEditUser] = useState({});
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
 
   useEffect(() => {
-    loadData(users, setUsers, paramsData);
-  }, []);
+    async function fetchData() {
+      const response = await loadData(paramsData);
+      setUsers([...users, ...response.results]);
+    }
+    fetchData();
+  }, [paramsData]);
 
   const loadMore = () => {
     setParamsData(
@@ -30,58 +36,63 @@ export default function MainGrid() {
         page: prevState.page + 1,
         scrolling: true,
       }),
-      loadData()
+      loadData(paramsData)
     );
   };
 
-  const handleSearchInput = (e) => {
-    const serchResult = users.filter((item) =>
-      item.name.first.toLowerCase().includes(e.target.value)
+  let filteredList = useMemo(() => {
+    if (!search) return users;
+
+    return users.filter((item) =>
+      item.name.first.toLowerCase().includes(search.toLocaleLowerCase())
     );
-    setUsers(serchResult);
+  }, [search, users]);
+
+  // const sortBy = useCallback(
+  //   (param) => {
+  //     // let sortBy;
+  //     // if (param === "name") sortBy = "name.first";
+  //     // if (param === "city") sortBy = "location.city";
+  //     // if (param === "state") sortBy = "location.state";
+  //     // if (param === "email") sortBy = "email";
+
+  //     const sortedUsers = users.sort((a, b) =>
+  //       a.name.first.localeCompare(b.name.first)
+  //     );
+  //     setUsers(sortedUsers);
+  //   },
+  //   [users]
+  // );
+
+  const sortByFunc = (param) => {
+    if (param === "name") setSortBy(".name.first");
+    if (param === "city") setSortBy(".location.city");
+    if (param === "state") setSortBy(".location.state");
+    if (param === "email") setSortBy(".email");
   };
 
-  const sortBy = useCallback(
-    (param) => {
-      // let sortBy;
-      // if (param === "name") sortBy = "name.first";
-      // if (param === "city") sortBy = "location.city";
-      // if (param === "state") sortBy = "location.state";
-      // if (param === "email") sortBy = "email";
+  useEffect(() => {
+    console.log("🚀 ~ file: MainGrid.js:76 ~ useEffect ~ sortBy", sortBy);
+    const sortedUsers = [...users].sort((a, b) => a[sortBy] - b[sortBy]);
+    console.log(
+      "🚀 ~ file: MainGrid.js:76 ~ useEffect ~ sortedUsers",
+      sortedUsers
+    );
+    // setUsers(sortedUsers);
 
-      const sortedUsers = users.sort((a, b) =>
-        a.name.first.localeCompare(b.name.first)
-      );
-      setUsers(sortedUsers);
-    },
-    [users]
-  );
+    // const sortArray = type => {
+    //   const types = {
+    //     albums: 'albums',
+    //     members: 'members',
+    //     formed: 'formed_in',
+    //   };
+    //   const sortProperty = types[type];
+    //   const sorted = [...bands].sort((a, b) => b[sortProperty] - a[sortProperty]);
+    //   setData(sorted);
+    // };
 
-  // useEffect(() => {
-  //   const sortBy = param => {
-  //       let sortBy;
-  //       if (param === "name") sortBy = "name.first";
-  //       if (param === "city") sortBy = "location.city";
-  //       if (param === "state") sortBy = "location.state";
-  //       if (param === "email") sortBy = "email";
-
-  //       const sortedUsers = [...users].sort((a, b) =>
-  //       b.sortBy - a.sortBy);
-  //       setUsers(sortedUsers);
-
-  // const sortArray = type => {
-  //   const types = {
-  //     albums: 'albums',
-  //     members: 'members',
-  //     formed: 'formed_in',
-  //   };
-  //   const sortProperty = types[type];
-  //   const sorted = [...bands].sort((a, b) => b[sortProperty] - a[sortProperty]);
-  //   setData(sorted);
-  // };
-
-  // sortArray(sortType);
-  // }, [sortBy]);
+    // sortArray(sortType);
+  }, [sortBy, users]);
 
   return (
     <div className={classes.structure}>
@@ -98,11 +109,15 @@ export default function MainGrid() {
         <h1 className={classes.titleHeader}>User DataBase</h1>
       </div>
       <div className={classes.grid}>
-        <SearchBar handleSearchInput={handleSearchInput} sortBy={sortBy} />
+        <SearchBar
+          sortByFunc={sortByFunc}
+          search={search}
+          setSearch={setSearch}
+        />
       </div>
       <div className={classes.grid}>
-        {users.length ? (
-          users?.map((user, index) => (
+        {filteredList.length ? (
+          filteredList?.map((user, index) => (
             <UserCard
               user={user}
               key={index}
