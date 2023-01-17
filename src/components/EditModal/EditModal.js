@@ -33,7 +33,7 @@ export default function EditModal({ open, handleOpen, user, users, setUsers }) {
     const editedUser = parserData(formValues, false);
     const usersCopy = [...users];
     const newUsers = usersCopy.map((item) => {
-      if (item.id.value.includes(editedUser.id)) {
+      if (item?.id?.value?.includes(editedUser.id)) {
         item = { ...item, ...editedUser };
       }
       return item;
